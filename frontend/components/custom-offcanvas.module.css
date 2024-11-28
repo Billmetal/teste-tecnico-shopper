@@ -1,0 +1,100 @@
+.offcanvasContainer {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    z-index: 1040;
+    transition: visibility 0.3s ease-in-out;
+    visibility: hidden;
+}
+
+.show {
+    visibility: visible;
+}
+
+.offcanvas {
+    background-color: #124461;
+    width: 300px;
+    max-width: 100%;
+    height: 100%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out;
+    z-index: 2;
+    background: #124461;
+    padding: 16px;
+}
+
+.offcanvas.dark {
+    background-color: var(--dark-blue);
+}
+
+.offcanvas.fullScreen {
+    width: 100%;
+}
+
+.offcanvasRight {
+    position: fixed;
+    right: 0;
+    transform: translateX(100%);
+}
+
+.show .offcanvasRight {
+    transform: translateX(0);
+}
+
+.offcanvasLeft {
+    position: fixed;
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.show .offcanvasLeft {
+    transform: translateX(0);
+}
+
+.offcanvasBackdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1;
+}
+
+.show .offcanvasBackdrop {
+    opacity: 1;
+    visibility: visible;
+}
+
+.closeBtnLeft {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+}
+
+.closeBtnRight {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.offcanvas h4 {
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 22px;
+    text-align: center;
+    color: #fff;
+}
