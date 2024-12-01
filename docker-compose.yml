@@ -26,7 +26,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - database  
+      - database
+    volumes:
+      - ./backend:/usr/src/app    
 
   database:
     container_name: database
@@ -37,7 +39,7 @@ services:
       POSTGRES_PASSWORD: admin1234
       POSTGRES_DB: mydb
     ports:
-      - 5432:5432
+      - 5432:5432  
     volumes:
       - db-data:/var/lib/postgresql/data
 

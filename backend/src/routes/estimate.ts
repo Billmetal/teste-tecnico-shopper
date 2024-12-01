@@ -19,11 +19,6 @@ interface MapDistance {
     destination: string;
 }
 
-interface LatLong {
-    latitude: number;
-    longitude: number;
-}
-
 interface Review {
     rating: number;
     comment: string;
@@ -39,15 +34,31 @@ interface Driver {
 }
 
 interface MapResponse {
-    origin: LatLong; 
-    destination: LatLong;
+    origin: {
+        latitude: number;
+        longitude: number;
+    }; 
+    destination: {
+        latitude: number;
+        longitude: number;
+    };
     distance: number; 
     duration: string;
     routeResponse: object;
 }
 
 interface EstimateResponse {
-    response: MapResponse;
+    origin: {
+        latitude: number;
+        longitude: number;
+    }; 
+    destination: {
+        latitude: number;
+        longitude: number;
+    };
+    distance: number; 
+    duration: string;
+    routeResponse: object;
     options: Driver[];
 }
 
@@ -58,8 +69,9 @@ routerEstimate.post('/estimate', async (req: Request, res: Response): Promise<an
   const estimateBody: EstimateBody = req.body;
   if (checkEstimateDataIn(estimateBody)) {
     const routeData: MapDistance = { origin: estimateBody.origin, destination: estimateBody.destination };
-    return calculateRoute(routeData).then((response: MapResponse) => {
-        return getDriversByDistance(response.distance).then((drivers) => {
+    return calculateRoute(routeData).then(response => {
+        const data: MapResponse = response as MapResponse;
+        return getDriversByDistance(data.distance).then((drivers) => {
             const driversPrices: Driver[] = drivers.map(driver => {
                 return {
                     id: driver.id,
@@ -70,12 +82,16 @@ routerEstimate.post('/estimate', async (req: Request, res: Response): Promise<an
                         comment: driver.comment,
                         rating: driver.rating
                     },
-                    value: calculateValue(driver.tax,response.distance)
+                    value: calculateValue(driver.tax,data.distance)
                 }
             });
             const estimateResponse: EstimateResponse = {
-                response: response,
-                options: driversPrices.sort((a, b) => a.value - b.value)
+                origin: data.origin,
+                destination: data.destination,
+                distance: data.distance,
+                duration: data.duration,
+                options: driversPrices.sort((a, b) => a.value - b.value),
+                routeResponse: data
             }
             return res.status(200).json(estimateResponse);
         }).catch((e: Error) => {

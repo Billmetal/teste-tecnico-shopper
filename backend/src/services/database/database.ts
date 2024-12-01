@@ -58,20 +58,14 @@ exec('npx prisma migrate dev --name init', (error, stdout, stderr) => {
 });
 
 // busca a lista de motoristas 
-async function getDrivers(): Promise<Drivers[]>{
+export async function getDrivers(): Promise<Drivers[]>{
     return await prisma.drivers.findMany();
 }
 
 // busca a lista de motoristas 
 export async function getDriversByDistance(distance: number): Promise<Drivers[]>{
-    const distanceInK = distance / 1000;
-    return await prisma.drivers.findMany({
-        where:{
-            min_km: {
-                lt: Number(distanceInK)
-            }
-        }
-    });
+    const drivers: Drivers[]=  await prisma.drivers.findMany();
+    return drivers.filter(driver => driver.min_km < (distance / 1000));
 }
 
 // salva os dados da viajem

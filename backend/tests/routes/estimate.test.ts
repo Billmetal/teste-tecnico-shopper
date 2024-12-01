@@ -14,11 +14,6 @@ interface EstimateError {
     error_description: string;
 }
 
-interface LatLong {
-    latitude: number;
-    longitude: number;
-}
-
 interface Review {
     rating: number;
     comment: string;
@@ -33,16 +28,18 @@ interface Driver {
     value: number;
 }
 
-interface MapResponse {
-    origin: LatLong; 
-    destination: LatLong;
+interface EstimateResponse {
+    origin: {
+        latitude: number;
+        longitude: number;
+    }; 
+    destination: {
+        latitude: number;
+        longitude: number;
+    };
     distance: number; 
     duration: string;
     routeResponse: object;
-}
-
-interface EstimateResponse {
-    response: MapResponse;
     options: Driver[];
 }
 
@@ -60,9 +57,9 @@ function isEstimateError(data: any): data is EstimateError {
 
 function isEstimateResponse(data: any): data is EstimateResponse {
     return (
-        typeof data.response.duration === 'string' &&
-        typeof data.response.destination === "object" && 
-        typeof data.response.routeResponse === "object" &&
+        typeof data.duration === 'string' &&
+        typeof data.destination === "object" && 
+        typeof data.routeResponse === "object" &&
         typeof data.options[0].value === "number"
     );
 }  

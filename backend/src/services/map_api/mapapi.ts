@@ -14,20 +14,24 @@ interface BodyRoute {
     address: string;
   };
   travelMode: string;
-}
-
-interface LatLong {
-  latitude: number;
-  longitude: number;
+  units?: string;
 }
 
 interface MapResponse {
-  origin: LatLong; 
-  destination: LatLong;
+  origin: {
+    latitude: number;
+    longitude: number;
+  }; 
+  destination: {
+    latitude: number;
+    longitude: number;
+  };
   distance: number; 
   duration: string;
   routeResponse: object;
 }
+
+type MapApiRespErr = MapResponse | Error;
 
 // Criação de uma instância do Axios para consumir api do Google maps
 const api: AxiosInstance = axios.create({
@@ -35,11 +39,11 @@ const api: AxiosInstance = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    "Authorization": `Bearer ${config.googleApiKey}`
+    "X-Goog-FieldMask": "routes,routes.distanceMeters,routes.duration,routes.legs.startLocation,routes.legs.endLocation"
   },
 });
 
-export async function calculateRoute(body: MapDistance): Promise<any> {
+export async function calculateRoute(body: MapDistance): Promise<MapApiRespErr> {
     const bodyRoute: BodyRoute = {
       origin: {
         address: body.origin 
@@ -49,11 +53,15 @@ export async function calculateRoute(body: MapDistance): Promise<any> {
       },
       travelMode: "DRIVE"
     };
-    return api.post('/v2:computeRoutes', bodyRoute).then((response) => {
+    return api.post('/v2:computeRoutes',bodyRoute,{
+      params: {
+        key: config.googleApiKey
+      }
+    }).then((response) => {
       const data = response.data.routes[0];
       const resp: MapResponse = {
-        origin: data.legs[0].startLocation,
-        destination: data.legs[0].endLocation,
+        origin: data.legs[0].startLocation.latLng,
+        destination: data.legs[0].endLocation.latLng,
         distance: data.distanceMeters,
         duration: data.duration,
         routeResponse: data
