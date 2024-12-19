@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import routerEstimate from './routes/estimate';
 import routerConfirm from './routes/confirm';
+import routerTrips from './routes/trips';
 
 const express = require("express");
 const app = express();
@@ -21,6 +22,9 @@ app.use("/ride",routerEstimate);
 
 // confirm route
 app.use("/ride",routerConfirm);
+
+// trips route
+app.use("/ride",routerTrips);
 
 // // get user by id
 // app.get("/users/:id", async (req: Request, res: Response) => {

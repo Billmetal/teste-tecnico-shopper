@@ -11,9 +11,30 @@ interface Drivers {
     min_km: number;
 }
 
+interface CheckDriver {
+    id?: number;
+    name?: string;
+}
+
+interface Trip {     
+    customer_id: string;  
+    origin: string;   
+    destination: string;   
+    distance: number;    
+    duration: string;   
+    value: Decimal;    
+    driver_id: number;  
+    driver_name: string; 
+    date?: Date;   
+}
+
 function isDriversList(data: any): data is Drivers[] {
     return Array.isArray(data);
-} 
+}
+
+function isTripList(data: any): data is Trip[] {
+    return Array.isArray(data);
+}
 
 describe("verifica se a tabela de motoristas está populada", () => {
     const prismaTest = new PrismaClient();
@@ -21,7 +42,6 @@ describe("verifica se a tabela de motoristas está populada", () => {
         const data = await prismaTest.drivers.findMany();;
         expect(isDriversList(data)).toBeTruthy();
         expect(data.length).toBeGreaterThan(0);
-        console.log("Teste Data = "+data);
     });
 
     it("getDriversByDistance deve retornar uma lista de motoristas filtrada por Km menor 1500 m", async () => {
@@ -30,7 +50,26 @@ describe("verifica se a tabela de motoristas está populada", () => {
         filteredDrivers.forEach(element => {
             expect(element.min_km).toBeLessThanOrEqual((1500 / 100));
         });
-        console.log("Teste Filtro = "+filteredDrivers);
+    });
+
+    it("deve buscar um motorista pelo id ou nome", async () => {
+        const checkDriver: CheckDriver = {id: 5, name: "Gustavo"}
+        const driver = await prismaTest.drivers.findUnique({
+            where: {
+                id: checkDriver.id,
+                name: checkDriver.name
+            }
+        });
+        expect(driver).toBeDefined();
+    });
+
+    it("verifica a lista de Trip feitas pelo customer_id", async () => {
+        const trips = await prismaTest.trip.findMany({
+            where: {
+                customer_id: "",
+            },
+        });
+        expect(isTripList(trips)).toBeTruthy();
     });
 
     afterAll(async () => {

@@ -34,4 +34,5 @@ model Trip {
   value        Decimal    
   driver_id    Int  
   driver_name  String    
+  date         DateTime @default(now())
 }
